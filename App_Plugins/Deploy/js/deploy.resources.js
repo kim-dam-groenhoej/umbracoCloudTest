@@ -15,6 +15,8 @@
             deploy: deploy,
             instantDeploy: instantDeploy,
             restore: restore,
+            partialRestore: partialRestore,
+            getSitemap: getSitemap,
             getStatus: getStatus,
             getUdiRange: getUdiRange
         };
@@ -69,6 +71,32 @@
                     });
         }
 
+        function partialRestore(targetUrl, restoreNodes) {
+
+            var data = {
+                SourceUrl: targetUrl,
+                RestoreNodes: restoreNodes
+            };
+
+            return $http.post(baseUrl + 'PartialRestore', data)
+                .then(function (response) {
+                    return response.data;
+                },
+                    function (response) {
+                        return $q.reject(response.data);
+                    });
+        }
+
+        function getSitemap(targetUrl) {
+            // url hack...
+            return $http.get(targetUrl + '/umbraco/backoffice/Deploy/Ui/GetSitemap')
+                .then(function (response) {
+                    return response.data;
+                },
+                    function (response) {
+                        return $q.reject(response.data);
+                    });
+        }
 
         function getStatus(sessionId) {
 

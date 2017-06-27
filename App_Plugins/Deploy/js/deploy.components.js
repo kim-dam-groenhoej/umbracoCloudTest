@@ -193,13 +193,14 @@
 
 (function() {
     'use strict';
-
+    
     angular
         .module('umbraco.deploy.components')
         .directive('udError', udErrorComponent);
 
     function udErrorComponent() {
         function link(scope, element, attr, ctrl) {
+
             scope.errorDetailsVisible = false;
             scope.toggleErrorDetails = function() {
                 scope.errorDetailsVisible = !scope.errorDetailsVisible;
@@ -210,7 +211,8 @@
             // so we should try to get the inner exception instead and use that for displaying errors.
             scope.uiException = scope.exception;
             while ((scope.uiException.ClassName === 'System.AggregateException' ||
-                    scope.uiException.ClassName === 'Umbraco.Deploy.Exceptions.RemoteApiException') &&
+                    scope.uiException.ClassName === 'Umbraco.Deploy.Exceptions.RemoteApiException' ||
+                    scope.uiException.ClassName === 'System.Net.Http.HttpRequestException') &&
                 scope.uiException.InnerException !== null) {
                 scope.uiException = scope.uiException.InnerException;
             }
@@ -225,7 +227,8 @@
                 'comment': "=",
                 'log': "=",
                 'status': "=",
-                'onBack': "&"
+                'onBack': "&",
+                'noNodes': '='
             },
             link: link
         };
@@ -495,6 +498,58 @@
 
     angular
         .module('umbraco.deploy.components')
+        .directive('udContentTypeChangedError', udContentTypeChangedErrorComponent);
+
+    function udContentTypeChangedErrorComponent() {
+        function link(scope, element, attr, ctrl) {
+        }
+
+        var directive = {
+            restrict: 'E',
+            replace: true,
+            templateUrl: '/App_Plugins/Deploy/views/components/errors/udcontenttypechangederror/udcontenttypechangederror.html',
+            scope: {
+                'exception': "="
+            },
+            link: link
+        };
+        return directive;
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('umbraco.deploy.components')
+        .directive('udDeploySchemaMismatchError', udDeploySchemaMismatchErrorComponent);
+
+    function udDeploySchemaMismatchErrorComponent() {
+        function link(scope, element, attr, ctrl) {
+            scope.errorDetailsVisible = false;
+            scope.toggleErrorDetails = function() {
+                scope.errorDetailsVisible = !scope.errorDetailsVisible;
+            }
+        }
+
+        var directive = {
+            restrict: 'E',
+            replace: true,
+            templateUrl: '/App_Plugins/Deploy/views/components/errors/uddeployschemamismatcherror/uddeployschemamismatcherror.html',
+            scope: {
+                'exception': "="
+            },
+            link: link
+        };
+        return directive;
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('umbraco.deploy.components')
         .directive('udKabumError', udKabumErrorComponent);
 
     function udKabumErrorComponent() {
@@ -523,9 +578,9 @@
 
     angular
         .module('umbraco.deploy.components')
-        .directive('udSchemaMismatchError', udSchemaMismatchErrorComponent);
+        .directive('udRestoreSchemaMismatchError', udRestoreSchemaMismatchErrorComponent);
 
-    function udSchemaMismatchErrorComponent() {
+    function udRestoreSchemaMismatchErrorComponent() {
         function link(scope, element, attr, ctrl) {
             scope.errorDetailsVisible = false;
             scope.toggleErrorDetails = function() {
@@ -536,9 +591,10 @@
         var directive = {
             restrict: 'E',
             replace: true,
-            templateUrl: '/App_Plugins/Deploy/views/components/errors/udschemamismatcherror/udschemamismatcherror.html',
+            templateUrl: '/App_Plugins/Deploy/views/components/errors/udrestoreschemamismatcherror/udrestoreschemamismatcherror.html',
             scope: {
-                'exception': "="
+                'exception': "=",
+                'noNodes': '='
             },
             link: link
         };
@@ -565,6 +621,30 @@
             restrict: 'E',
             replace: true,
             templateUrl: '/App_Plugins/Deploy/views/components/errors/udunauthorizedclienterror/udunauthorizedclienterror.html',
+            scope: {
+                'exception': "="
+            },
+            link: link
+        };
+        return directive;
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('umbraco.deploy.components')
+        .directive('udWebExceptionError', udWebExceptionErrorComponent);
+
+    function udWebExceptionErrorComponent() {
+        function link(scope, element, attr, ctrl) {
+        }
+
+        var directive = {
+            restrict: 'E',
+            replace: true,
+            templateUrl: '/App_Plugins/Deploy/views/components/errors/udwebexceptionerror/udwebexceptionerror.html',
             scope: {
                 'exception': "="
             },

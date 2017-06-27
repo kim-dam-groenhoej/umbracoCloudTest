@@ -52,11 +52,11 @@
                     </div>
 
                 </div>
-
+                
                 <ud-restore-progress
                     ng-if="vm.restore.status === 'inProgress'"
                     progress="vm.restore.restoreProgress"
-                    target-name="vm.restore.targetName"
+                    target-name="vm.restoreWorkspace.Name"
                     current-activity="vm.restore.currentActivity">
                 </ud-restore-progress>
 

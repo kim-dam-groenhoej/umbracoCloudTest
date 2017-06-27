@@ -111,12 +111,22 @@
                     </div>
                 </div>
 
-                <div ng-if="vm.restore.error.hasError" class="json">
+                <ud-error
+                    ng-if="vm.restore.error.hasError"
+                    comment="vm.restore.error.comment"
+                    log="vm.restore.error.log"
+                    exception="vm.restore.error.exception"
+                    status="vm.restore.status"
+                    class="ud-restore-error"
+                    no-nodes="true">
+                </ud-error>
+
+                <%--<div ng-if="vm.restore.error.hasError" class="json">
                     <h1 style="margin-top: 0;">An error occurred: </h1>
                     <h2 ng-if="vm.restore.error.exceptionMessage">{{ vm.restore.error.exceptionMessage }}</h2>
                     <a href="#" ng-click="vm.showLog()" ng-hide="vm.logIsvisible">Show details</a>
                     <pre ng-if="vm.logIsvisible === true">{{ vm.restore.error.log }}</pre>
-                </div>
+                </div>--%>
 
             </div>
 
@@ -132,6 +142,7 @@
 <script type="text/javascript" src="<%= IOHelper.ResolveUrl(SystemDirectories.Umbraco) %>/backoffice/signalr/hubs"></script>
 <script type="text/javascript" src="<%= IOHelper.ResolveUrl(SystemDirectories.AppPlugins) %>/deploy/js/nonodes.modules.js"></script>
 <script type="text/javascript" src="<%= IOHelper.ResolveUrl(SystemDirectories.AppPlugins) %>/deploy/js/deploy.services.js"></script>
+<script type="text/javascript" src="<%= IOHelper.ResolveUrl(SystemDirectories.AppPlugins) %>/deploy/js/deploy.components.js"></script>
 <script type="text/javascript" src="<%= IOHelper.ResolveUrl(SystemDirectories.AppPlugins) %>/deploy/js/nonodes.bootstrap.js"></script>
 <script type="text/javascript">
     angular.bootstrap(document, ['umbraco.nonodes']);

@@ -161,6 +161,146 @@ angular.module('umbraco.deploy')
 (function () {
     "use strict";
 
+    function PartialRestoreDialogController($scope, deploySignalrService, deployService, angularHelper, deployConfiguration, deployHelper) {
+
+        var vm = this;
+
+        vm.config = deployConfiguration;
+        vm.restoreWorkspace = {};
+        vm.restore = {};
+        vm.loading = true;
+
+        vm.selectable = $scope.currentNode.id === "-1";
+        if (vm.selectable === false) {
+            vm.loading = false;
+        }
+        vm.changeDestination = changeDestination;
+        vm.startRestore = startRestore;
+        vm.resetRestore = resetRestore;
+
+        var nodeUdis = [];
+
+        function onInit() {
+            // reset restore progress
+            resetRestore();
+
+            // set the last workspace to restore from as default
+            if(vm.config.RestoreWorkspaces) {
+                //var lastWorkspaceIndex = vm.config.Workspaces.length - 1;
+                vm.restoreWorkspace = _.last(vm.config.RestoreWorkspaces);//[lastWorkspaceIndex];
+            }
+
+            if (vm.selectable === true) {
+                vm.loading = true;
+                deployService.getSitemap(vm.restoreWorkspace.Url).then(function(data) {
+                    vm.sitemap = data;
+                    vm.loading = false;
+                });
+            }
+        }
+
+        function changeDestination(workspace) {
+            vm.restoreWorkspace = workspace;
+            if (vm.selectable === true) {
+                vm.loading = true;
+                deployService.getSitemap(vm.restoreWorkspace.Url).then(function(data) {
+                    vm.sitemap = data;
+                    vm.loading = false;
+                });
+            }
+        }
+
+        function startRestore(workspace) {
+
+            var restoreNodes = [];
+
+            if (vm.selectable === true) {
+                _.each(nodeUdis,
+                    function (o, i) {
+                        restoreNodes.push({ id: o, includeDescendants: true });
+                    });
+
+            } else {
+                restoreNodes = [
+                    {
+                        id: $scope.currentNode.id,
+                        includeDescendants: true
+                    }
+                ];
+            }
+
+            deployService.partialRestore(workspace.Url, restoreNodes)
+                .then(function(data) {
+                        vm.restore.status = 'inProgress';
+                    },
+                    function(data) {
+                        vm.restore.status = 'failed';
+                        vm.restore.error = {
+                            hasError: true,
+                            comment: data.Message
+                        };
+                    });
+
+        }
+
+        function resetRestore() {
+            vm.restore = {
+                'restoreProgress': 0,
+                'targetName': '',
+                'currentActivity': '',
+                'status': '',
+                'error': {}
+            };
+        }
+
+        $scope.$on('restore:sessionUpdated', function (event, args) {
+            // make sure the event is for us
+            if (args.sessionId === deployService.sessionId) {
+
+                angularHelper.safeApply($scope, function () {
+
+                    vm.restore.restoreProgress = args.percent;
+                    vm.restore.currentActivity = args.comment;
+                    vm.restore.status = deployHelper.getStatusValue(args.status);
+                    
+                    if (vm.restore.status === 'failed' || 
+                        vm.restore.status === 'cancelled' ||
+                        vm.restore.status === 'timedOut') {
+                        vm.restore.error = {
+                            hasError: true,
+                            comment: args.comment,
+                            log: args.log,
+                            exception: args.exception
+                        };
+                    }
+                });
+            }
+        });
+
+        vm.selectNode = function (node, event) {
+            var newArray = [];
+            if (!node.selected) {
+                node.selected = true;
+                nodeUdis.push(node.Udi);
+            } else {
+                angular.forEach(nodeUdis, function (nodeUdi) {
+                    if (nodeUdi !== node.Udi) {
+                        newArray.push(nodeUdi);
+                    }
+                });
+                node.selected = false;
+                nodeUdis = newArray;
+            }
+            event.stopPropagation();
+        };
+        onInit();
+    }
+
+    angular.module("umbraco.deploy").controller("UmbracoDeploy.PartialRestoreDialogController", PartialRestoreDialogController);
+})();
+(function () {
+    "use strict";
+
     function RestoreDialogController($scope, deploySignalrService, deployService, angularHelper, deployConfiguration, deployHelper) {
 
         var vm = this;

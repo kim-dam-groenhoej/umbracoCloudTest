@@ -36,14 +36,26 @@
                 .then(function(response) {
                         vm.step = "restoreWebsite";
                     },
-                    function(response) {
+                    function (response) {
                         vm.restore = {
                             'error': {
                                 hasError: true,
                                 exceptionMessage: response.data.ExceptionMessage,
-                                log: response.data.StackTrace
+                                log: response.data.StackTrace,
+                                exception: response.data.Exception
                             }
                         };
+
+                        // fetch the inner exception that actually makes sense to show in the UI.
+                        // AggregateException and RemoteApiException are completely non-saying about what the problem is
+                        // so we should try to get the inner exception instead and use that for displaying errors.
+                        while ((vm.restore.error.exception.ClassName === 'System.AggregateException' ||
+                                vm.restore.error.exception.ClassName === 'Umbraco.Deploy.Exceptions.RemoteApiException' ||
+                                vm.restore.error.exception.ClassName === 'System.Net.Http.HttpRequestException') &&
+                            vm.restore.error.exception.InnerException !== null) {
+                            vm.restore.error.exception = vm.restore.error.exception.InnerException;
+                        }
+
                     });
         };
 
@@ -79,8 +91,18 @@
                 vm.restore.error = {
                     hasError: true,
                     comment: args.comment,
-                    log: args.log
+                    log: args.log,
+                    exception: args.exception
                 };
+
+                // fetch the inner exception that actually makes sense to show in the UI.
+                // AggregateException and RemoteApiException are completely non-saying about what the problem is
+                // so we should try to get the inner exception instead and use that for displaying errors.
+                while ((vm.restore.error.exception.ClassName === 'System.AggregateException' ||
+                        vm.restore.error.exception.ClassName === 'Umbraco.Deploy.Exceptions.RemoteApiException') &&
+                    vm.restore.error.exception.InnerException !== null) {
+                    vm.restore.error.exception = vm.restore.error.exception.InnerException;
+                }
             }
 
             return status;

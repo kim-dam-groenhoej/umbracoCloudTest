@@ -88,6 +88,33 @@ angular.module('umbraco.deploy.services')
 
             };
 
+            instance.partialRestore = function (targetUrl, restoreNodes) {
+
+                var deferred = $q.defer();
+
+                deployResource.partialRestore(targetUrl, restoreNodes)
+                    .then(function (data) {
+                        instance.setSessionId(data.SessionId);
+                        deferred.resolve(data);
+                    }, function (data) {
+                        deferred.reject(data);
+                    });
+
+                return deferred.promise;
+
+            };
+
+            instance.getSitemap = function (targetUrl) {
+                var deferred = $q.defer();
+                deployResource.getSitemap(targetUrl)
+                    .then(function (data) {
+                        deferred.resolve(data);
+                    }, function (data) {
+                        deferred.reject(data);
+                    });
+                return deferred.promise;
+            };
+
             instance.getStatus = function () {
 
                 var deferred = $q.defer();

@@ -283,6 +283,15 @@
 .ud-nonodes .json code {
   color: #d3d3d3;
 }
+.ud-nonodes .ud-restore-error {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 15px;
+  margin-top: 20px;
+  text-align: left;
+}
+.ud-nonodes .ud-restore-error .ud-schema-mismatch-error__title {
+  color: #fff;
+}
 .ud-schema-mismatch-error__group {
   margin-bottom: 15px;
 }
