@@ -11,7 +11,7 @@
 	<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <atom:link href="@siteURL/rss" rel="self" type="application/rss+xml" />
-        <title>@rssPage.title</title>
+        <title>@rssPage.name</title>
         @Html.Raw("<link>")@siteURL@Html.Raw("</link>")
         <description>@rssPage.description</description>
         <pubDate>@String.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", @rssPage.CreateDate)</pubDate>
