@@ -29,7 +29,7 @@
                     {@article.Name}
                 </title>
                 @Html.Raw("<link>")@siteURL@article.Url@Html.Raw("</link>")
-                <description>@article.previewText</description>
+                <description>@article.shortDescription</description>
                 <pubDate>@String.Format("{0:ddd, dd MMM yyyy} {1:HH:mm:ss} EST", @article.date, @article.CreateDate)</pubDate>
                 <guid>@siteURL/@article.Id</guid>
             </item>
