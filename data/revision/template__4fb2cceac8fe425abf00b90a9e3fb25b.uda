@@ -1,0 +1,1 @@
+{"File":"umb://template-file/xmlblog.cshtml","Master":null,"Udi":"umb://template/4fb2cceac8fe425abf00b90a9e3fb25b","Dependencies":[{"Udi":"umb://template-file/xmlblog.cshtml","Ordering":true,"Mode":0}],"Name":"xmlblog","Alias":"xmlblog","__type":"Umbraco.Deploy,Umbraco.Deploy.Artifacts.TemplateArtifact","__version":"1.0.4"}
