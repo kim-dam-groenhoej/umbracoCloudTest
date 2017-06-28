@@ -1,7 +1,38 @@
 ﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
 	Layout = null;
-}
-
-@* the fun starts here *@
-
+}<?xml version="1.0" encoding="UTF-8"?>
+@{
+	umbraco.library.ChangeContentType("text/xml");		
+	var siteURL = "http://" +  Request.Url.Host.ToString();
+	var rssPage = CurrentPage.AncestorOrSelf(1).Rss.First();
+	var articles = CurrentPage.AncestorOrSelf(1).Blog.First().Children.OrderBy("date desc");
+}	
+	<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <atom:link href="@siteURL/rss" rel="self" type="application/rss+xml" />
+        <title>@rssPage.title</title>
+        @Html.Raw("<link>")@siteURL@Html.Raw("</link>")
+        <description>@rssPage.description</description>
+        <pubDate>@String.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", @rssPage.CreateDate)</pubDate>
+        <lastBuildDate>@String.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", DateTime.Now)</lastBuildDate>
+        <language>en</language>
+        <generator>Umbraco</generator>
+ 
+        @foreach (var article in articles)
+        {
+            <item>
+                <title>
+                    @if (article.HasValue("title"))
+                    {@article.title}
+                    else
+                    {@article.Name}
+                </title>
+                @Html.Raw("<link>")@siteURL@article.Url@Html.Raw("</link>")
+                <description>@article.previewText</description>
+                <pubDate>@String.Format("{0:ddd, dd MMM yyyy} {1:HH:mm:ss} EST", @article.date, @article.CreateDate)</pubDate>
+                <guid>@siteURL/@article.Id</guid>
+            </item>
+        }
+    </channel>
+</rss>
